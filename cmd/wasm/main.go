@@ -27,12 +27,12 @@ type GameState struct {
 	Score    int
 }
 
-var state GameState
-var ctx js.Value
-var scoreEl js.Value
-
-var width, height int
-var Speed = time.Second / 10
+var (
+	state         GameState
+	ctx           js.Value
+	scoreEl       js.Value
+	width, height int
+)
 
 const (
 	CellSize = 20
@@ -93,13 +93,16 @@ func reset() {
 }
 
 func gameLoop() {
-	ticker := time.NewTicker(Speed)
-	defer ticker.Stop()
-
-	for range ticker.C {
+	for {
 		update()
 		draw()
+		time.Sleep(getDelay((state.Score)))
 	}
+}
+
+func getDelay(score int) time.Duration {
+	delay := time.Second / time.Duration(10+score)
+	return delay
 }
 
 func update() {
