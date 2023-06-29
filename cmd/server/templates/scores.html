@@ -11,10 +11,10 @@
 				<th>Name</th>
 				<th>Score</th>
 			</tr>
-			{{ range $name, $score := .scores }}
+			{{ range .scores }}
 			<tr>
-				<td>{{ $name }}</td>
-				<td>{{ $score }}</td>
+				<td>{{ .Name }}</td>
+				<td>{{ .Score }}</td>
 			</tr>
 			{{ end }}
 		</table>

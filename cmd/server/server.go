@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
@@ -13,6 +14,11 @@ import (
 
 var ctx = context.Background()
 var client *redis.Client
+
+type scoreEntry struct {
+	Name  string
+	Score int
+}
 
 func init() {
 	if err := godotenv.Load(); err != nil {
@@ -50,21 +56,25 @@ func main() {
 	})
 
 	r.GET("/scores", func(c *gin.Context) {
-		keys, err := client.Keys(ctx, "*").Result()
+		names, err := client.Keys(ctx, "*").Result()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 
-		scores := make(map[string]int)
-		for _, name := range keys {
+		var scores []scoreEntry
+		for _, name := range names {
 			score, err := client.Get(ctx, name).Int()
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
 			}
-			scores[name] = score
+			scores = append(scores, scoreEntry{Name: name, Score: score})
 		}
+
+		sort.Slice(scores, func(i, j int) bool {
+			return scores[i].Score > scores[j].Score
+		})
 
 		c.HTML(http.StatusOK, "scores.html", gin.H{
 			"scores": scores,
