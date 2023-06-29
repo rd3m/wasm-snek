@@ -11,9 +11,8 @@ type Point struct {
 }
 
 type Snake struct {
-	Body    []Point
-	Dir     Point // The direction the snake is moving
-	Growing bool  // Whether the snake is growing
+	Body      []Point
+	Direction Point
 }
 
 type Apple struct {
@@ -57,8 +56,8 @@ func main() {
 func reset() {
 	state = GameState{
 		Snake: Snake{
-			Body: []Point{{X: width / 2, Y: height / 2}},
-			Dir:  Point{X: CellSize, Y: 0},
+			Body:      []Point{{X: width / 2, Y: height / 2}},
+			Direction: Point{X: CellSize, Y: 0},
 		},
 		Apple: Apple{
 			Pos: Point{X: rand.Float64() * width, Y: rand.Float64() * height},
@@ -84,8 +83,8 @@ func update() {
 
 	head := state.Snake.Body[0]
 	next := Point{
-		X: head.X + state.Snake.Dir.X,
-		Y: head.Y + state.Snake.Dir.Y,
+		X: head.X + state.Snake.Direction.X,
+		Y: head.Y + state.Snake.Direction.Y,
 	}
 
 	if next.X < 0 || next.Y < 0 || next.X >= width || next.Y >= height {
@@ -122,20 +121,16 @@ func collidesWithApple(p Point) bool {
 }
 
 func draw() {
-	// Clear the canvas
 	ctx.Call("clearRect", 0, 0, width, height)
 
-	// Draw the apple
 	ctx.Set("fillStyle", "red")
 	drawPoint(state.Apple.Pos)
 
-	// Draw the snake
 	ctx.Set("fillStyle", "green")
 	for _, p := range state.Snake.Body {
 		drawPoint(p)
 	}
 
-	// If the game is over, draw a message
 	if state.GameOver {
 		ctx.Set("font", "48px serif")
 		ctx.Set("fillStyle", "black")
