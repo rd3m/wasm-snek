@@ -28,7 +28,13 @@ func init() {
 func main() {
 	r := gin.Default()
 
-	r.Static("/", "../wasm")
+	r.LoadHTMLGlob("templates/*")
+
+	r.Static("/wasm", "../wasm")
+
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
 
 	r.POST("/saveScore", func(c *gin.Context) {
 		name := c.PostForm("name")
@@ -41,6 +47,28 @@ func main() {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "Score saved"})
+	})
+
+	r.GET("/scores", func(c *gin.Context) {
+		keys, err := client.Keys(ctx, "*").Result()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		scores := make(map[string]int)
+		for _, name := range keys {
+			score, err := client.Get(ctx, name).Int()
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			scores[name] = score
+		}
+
+		c.HTML(http.StatusOK, "scores.html", gin.H{
+			"scores": scores,
+		})
 	})
 
 	r.Run()
