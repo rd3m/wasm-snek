@@ -1,0 +1,23 @@
+{{ define "header" }}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Snek</title>
+		<link rel="stylesheet" href="/assets/output.css" />
+	</head>
+	<body class="flex flex-col w-full h-screen">
+		<nav class="navbar bg-base-100">
+			<div class="flex-1">
+				<a href="/" class="btn btn-ghost text-3xl">Snek</a>
+			</div>
+			<div class="flex-none">
+				<ul class="menu menu-horizontal px-1">
+					<li><a href="/">Play</a></li>
+					<li><a href="/scores">Scores</a></li>
+				</ul>
+			</div>
+		</nav>
+		{{ end}}
+	</body>
+</html>

@@ -1,0 +1,5 @@
+{
+	"watch": ["cmd/server/assets/*.css", "cmd/server/templates/*.html"],
+	"ext": "css,html",
+	"exec": "npm run css"
+}

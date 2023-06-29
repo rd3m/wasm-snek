@@ -1,0 +1,25 @@
+{
+	"name": "snek",
+	"version": "1.0.0",
+	"description": "Snake game implemented in Go and compiled to wasm, served from a Go server.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"css": "npx tailwindcss -i cmd/server/assets/input.css -o cmd/server/assets/output.css"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/rd3m/wasm-snek.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/rd3m/wasm-snek/issues"
+	},
+	"homepage": "https://github.com/rd3m/wasm-snek#readme",
+	"devDependencies": {
+		"daisyui": "^3.1.7",
+		"tailwindcss": "^3.3.2"
+	}
+}
