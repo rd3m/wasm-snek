@@ -2,12 +2,13 @@ package main
 
 import (
 	"math/rand"
+	"os"
 	"syscall/js"
 	"time"
 )
 
 type Point struct {
-	X, Y float64
+	X, Y int
 }
 
 type Snake struct {
@@ -23,16 +24,18 @@ type GameState struct {
 	Snake    Snake
 	Apple    Apple
 	GameOver bool
+	Score    int
 }
 
 var state GameState
 var ctx js.Value
+var scoreEl js.Value
 
-var width, height float64
+var width, height int
+var Speed = time.Second / 10
 
 const (
 	CellSize = 20
-	Speed    = time.Second / 10
 )
 
 func init() {
@@ -43,24 +46,47 @@ func main() {
 	// Init Canvas stuff
 	doc := js.Global().Get("document")
 	canvasEl := doc.Call("getElementById", "canvas")
-	width = canvasEl.Get("clientWidth").Float()
-	height = canvasEl.Get("clientHeight").Float()
-	canvasEl.Set("width", width)
-	canvasEl.Set("height", height)
+	width = canvasEl.Get("clientWidth").Int() / CellSize
+	height = canvasEl.Get("clientHeight").Int() / CellSize
+	canvasEl.Set("width", width*CellSize)
+	canvasEl.Set("height", height*CellSize)
 	ctx = canvasEl.Call("getContext", "2d")
+	scoreEl = doc.Call("getElementById", "score")
+
+	keyDownEvt := js.FuncOf(keyDownEvent)
+	defer keyDownEvt.Release()
+	doc.Call("addEventListener", "keydown", keyDownEvt)
 
 	reset()
 	gameLoop()
+}
+
+func keyDownEvent(this js.Value, args []js.Value) interface{} {
+	e := args[0]
+	keyCode := e.Get("keyCode").Int()
+
+	switch keyCode {
+	case 37: // left arrow
+		state.Snake.Direction = Point{-1, 0}
+	case 38: // up arrow
+		state.Snake.Direction = Point{0, -1}
+	case 39: // right arrow
+		state.Snake.Direction = Point{1, 0}
+	case 40: // down arrow
+		state.Snake.Direction = Point{0, 1}
+	}
+
+	return nil
 }
 
 func reset() {
 	state = GameState{
 		Snake: Snake{
 			Body:      []Point{{X: width / 2, Y: height / 2}},
-			Direction: Point{X: CellSize, Y: 0},
+			Direction: Point{X: 1, Y: 0},
 		},
 		Apple: Apple{
-			Pos: Point{X: rand.Float64() * width, Y: rand.Float64() * height},
+			Pos: Point{X: rand.Intn(width), Y: rand.Intn(height)},
 		},
 		GameOver: false,
 	}
@@ -78,18 +104,15 @@ func gameLoop() {
 
 func update() {
 	if state.GameOver {
+		js.Global().Set("finalScore", state.Score)
+		os.Exit(1)
 		return
 	}
 
 	head := state.Snake.Body[0]
 	next := Point{
-		X: head.X + state.Snake.Direction.X,
-		Y: head.Y + state.Snake.Direction.Y,
-	}
-
-	if next.X < 0 || next.Y < 0 || next.X >= width || next.Y >= height {
-		state.GameOver = true
-		return
+		X: (head.X + state.Snake.Direction.X + width) % width,
+		Y: (head.Y + state.Snake.Direction.Y + height) % height,
 	}
 
 	if collidesWithSnake(next) {
@@ -99,10 +122,12 @@ func update() {
 
 	state.Snake.Body = append([]Point{next}, state.Snake.Body...)
 
-	if !collidesWithApple(next) {
-		state.Snake.Body = state.Snake.Body[:len(state.Snake.Body)-1]
+	if collidesWithApple(next) {
+		state.Apple.Pos = Point{X: rand.Intn(width), Y: rand.Intn(height)}
+		state.Score++
+		scoreEl.Set("innerHTML", state.Score)
 	} else {
-		state.Apple.Pos = Point{X: rand.Float64() * width, Y: rand.Float64() * height}
+		state.Snake.Body = state.Snake.Body[:len(state.Snake.Body)-1]
 	}
 }
 
@@ -121,7 +146,7 @@ func collidesWithApple(p Point) bool {
 }
 
 func draw() {
-	ctx.Call("clearRect", 0, 0, width, height)
+	ctx.Call("clearRect", 0, 0, width*CellSize, height*CellSize)
 
 	ctx.Set("fillStyle", "red")
 	drawPoint(state.Apple.Pos)
@@ -130,14 +155,8 @@ func draw() {
 	for _, p := range state.Snake.Body {
 		drawPoint(p)
 	}
-
-	if state.GameOver {
-		ctx.Set("font", "48px serif")
-		ctx.Set("fillStyle", "black")
-		ctx.Call("fillText", "Game Over", width/3, height/2)
-	}
 }
 
 func drawPoint(p Point) {
-	ctx.Call("fillRect", p.X, p.Y, CellSize, CellSize)
+	ctx.Call("fillRect", p.X*CellSize, p.Y*CellSize, CellSize, CellSize)
 }
