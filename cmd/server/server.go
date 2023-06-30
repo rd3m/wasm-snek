@@ -42,6 +42,7 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"showCurrentScore": true,
+			"Title":            "Snek | Play",
 		})
 	})
 
@@ -81,6 +82,7 @@ func main() {
 
 		c.HTML(http.StatusOK, "scores.html", gin.H{
 			"scores": scores,
+			"Title":  "Snek | Scores",
 		})
 	})
 
