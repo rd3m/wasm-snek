@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"os"
 	"syscall/js"
 	"time"
 )
@@ -94,6 +93,10 @@ func reset() {
 
 func gameLoop() {
 	for {
+		if state.GameOver {
+			js.Global().Call("handleGameOver", state.Score)
+			break
+		}
 		update()
 		draw()
 		time.Sleep(getDelay((state.Score)))
@@ -106,12 +109,6 @@ func getDelay(score int) time.Duration {
 }
 
 func update() {
-	if state.GameOver {
-		js.Global().Set("finalScore", state.Score)
-		os.Exit(1)
-		return
-	}
-
 	head := state.Snake.Body[0]
 	next := Point{
 		X: (head.X + state.Snake.Direction.X + width) % width,

@@ -36,7 +36,7 @@ func main() {
 
 	r.LoadHTMLGlob("templates/*")
 
-	r.Static("/wasm", "../wasm")
+	r.Static("/wasm", "./wasm")
 	r.Static("/assets", "./assets")
 
 	r.GET("/", func(c *gin.Context) {

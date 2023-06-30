@@ -4,33 +4,31 @@
 <script>
 	async function runWasm() {
 		const go = new Go();
-		go.exit = (code) => {
-			if (code !== 0) {
-				const username = prompt("Game Over! Please enter your name to save your score:");
-				if (username !== null) {
-					fetch("/saveScore", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/x-www-form-urlencoded",
-						},
-						body: `name=${encodeURIComponent(username)}&score=${encodeURIComponent(finalScore)}`,
-					})
-						.then((response) => response.json())
-						.then((data) => {
-							console.log(data);
-							window.location.href = "/scores";
-						})
-						.catch((error) => {
-							console.error("Error:", error);
-						});
-				}
-			}
-		};
-
 		const result = await WebAssembly.instantiateStreaming(fetch("/wasm/main.wasm"), go.importObject);
 		go.run(result.instance);
 	}
-
 	runWasm();
 </script>
+<script>
+	window.handleGameOver = function (score) {
+		const username = prompt("Game Over! Please enter your name to save your score:");
+		if (username !== null) {
+			fetch("/saveScore", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				body: `name=${encodeURIComponent(username)}&score=${encodeURIComponent(score)}`,
+			})
+				.then((response) => response.json())
+				.then((data) => {
+					window.location.href = "/scores";
+				})
+				.catch((error) => {
+					console.error("Error:", error);
+				});
+		}
+	};
+</script>
+
 {{ template "footer" . }}
