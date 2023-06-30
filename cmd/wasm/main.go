@@ -149,7 +149,7 @@ func draw() {
 	ctx.Call("clearRect", 0, 0, width*CellSize, height*CellSize)
 
 	ctx.Set("fillStyle", "red")
-	drawPoint(state.Apple.Pos)
+	drawApple(state.Apple.Pos)
 
 	ctx.Set("fillStyle", "green")
 	for _, p := range state.Snake.Body {
@@ -159,4 +159,12 @@ func draw() {
 
 func drawPoint(p Point) {
 	ctx.Call("fillRect", p.X*CellSize, p.Y*CellSize, CellSize, CellSize)
+}
+
+func drawApple(p Point) {
+	x := js.ValueOf(p.X * CellSize)
+	y := js.ValueOf(p.Y * CellSize)
+	width := js.ValueOf(CellSize) // replace with actual width and height if different
+	height := js.ValueOf(CellSize)
+	js.Global().Call("drawAppleAtPoint", ctx, x, y, width, height)
 }

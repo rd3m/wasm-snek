@@ -30,5 +30,19 @@
 		}
 	};
 </script>
+<script>
+	const appleImage = new Image();
+	appleImage.src = "/assets/apple.png";
+
+	window.drawAppleAtPoint = function (ctx, x, y, width, height) {
+		if (appleImage.complete) {
+			ctx.drawImage(appleImage, x, y, width, height);
+		} else {
+			appleImage.onload = function () {
+				ctx.drawImage(appleImage, x, y, width, height);
+			};
+		}
+	};
+</script>
 
 {{ template "footer" . }}
