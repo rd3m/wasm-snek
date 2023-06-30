@@ -43,6 +43,37 @@
 			};
 		}
 	};
+	window.drawSnakeHead = function (ctx, x, y, width, height, directionX, directionY) {
+		let angle;
+		if (directionX === 1 && directionY === 0) {
+			angle = 0; // Facing right
+		} else if (directionX === -1 && directionY === 0) {
+			angle = Math.PI; // Facing left
+		} else if (directionX === 0 && directionY === 1) {
+			angle = Math.PI / 2; // Facing down
+		} else if (directionX === 0 && directionY === -1) {
+			angle = Math.PI * 1.5; // Facing up
+		}
+
+		// Draw rectangle
+		if (directionX === 1) {
+			ctx.fillRect(x, y, width / 2, height);
+		} else if (directionX === -1) {
+			ctx.fillRect(x + width / 2, y, width / 2, height);
+		} else if (directionY === 1) {
+			ctx.fillRect(x, y, width, height / 2);
+		} else if (directionY === -1) {
+			ctx.fillRect(x, y + height / 2, width, height / 2);
+		}
+
+		// Draw triangle
+		ctx.beginPath();
+		ctx.moveTo(x + width / 2, y + height / 2); // Move to center
+		ctx.arc(x + width / 2, y + height / 2, width / 2, angle - Math.PI / 2, angle + Math.PI / 2);
+		ctx.lineTo(x + width / 2, y + height / 2); // Back to center
+		ctx.closePath();
+		ctx.fill();
+	};
 </script>
 
 {{ template "footer" . }}

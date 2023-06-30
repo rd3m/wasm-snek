@@ -152,8 +152,12 @@ func draw() {
 	drawApple(state.Apple.Pos)
 
 	ctx.Set("fillStyle", "green")
-	for _, p := range state.Snake.Body {
-		drawPoint(p)
+	for i, p := range state.Snake.Body {
+		if i == 0 {
+			drawSnakeHead(p, state.Snake.Direction)
+		} else {
+			drawPoint(p)
+		}
 	}
 }
 
@@ -167,4 +171,8 @@ func drawApple(p Point) {
 	width := js.ValueOf(CellSize) // replace with actual width and height if different
 	height := js.ValueOf(CellSize)
 	js.Global().Call("drawAppleAtPoint", ctx, x, y, width, height)
+}
+
+func drawSnakeHead(p Point, direction Point) {
+	js.Global().Call("drawSnakeHead", ctx, p.X*CellSize, p.Y*CellSize, CellSize, CellSize, direction.X, direction.Y)
 }
