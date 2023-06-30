@@ -1,3 +1,13 @@
+FROM node:16 as npm
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+COPY . .
+
+RUN npm run css
+
 FROM golang:1.20 as builder
 
 WORKDIR /app
@@ -21,6 +31,7 @@ WORKDIR /app
 COPY --from=builder /app/cmd/server/server /app/server
 COPY --from=wasm-builder /app/main.wasm /app/wasm/
 COPY --from=wasm-builder /app/wasm_exec.js /app/wasm/
+COPY --from=npm /app/cmd/server/assets/output.css ./assets/output.css
 
 WORKDIR /app
 COPY cmd/server/templates/ ./templates/
