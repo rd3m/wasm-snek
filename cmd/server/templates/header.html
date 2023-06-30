@@ -9,15 +9,17 @@
 	<body class="flex flex-col w-full h-screen">
 		<nav class="navbar bg-base-100">
 			<div class="flex-1">
-				<a href="/" class="btn btn-ghost text-3xl">Snek</a>
+				<a href="/" class="text-3xl btn btn-ghost">Snek</a>
 			</div>
+            {{ if .showCurrentScore }}
+            <h2 class="flex flex-1 gap-2">Score: <span id="score">0</span></h2>
+            {{ end }}
 			<div class="flex-none">
-				<ul class="menu menu-horizontal px-1">
+				<ul class="px-1 menu menu-horizontal">
 					<li><a href="/">Play</a></li>
 					<li><a href="/scores">Scores</a></li>
 				</ul>
 			</div>
 		</nav>
 		{{ end}}
-	</body>
-</html>
+

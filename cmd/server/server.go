@@ -40,7 +40,9 @@ func main() {
 	r.Static("/assets", "./assets")
 
 	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"showCurrentScore": true,
+		})
 	})
 
 	r.POST("/saveScore", func(c *gin.Context) {

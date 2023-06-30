@@ -1,9 +1,5 @@
 {{ template "header" . }}
-<div class="flex gap-4 px-4">
-	<h2 class="text-3xl">Score:</h2>
-	<h2 id="score" class="text-3xl">0</h2>
-</div>
-<canvas id="canvas" class="w-full h-full bg-neutral"></canvas>
+<canvas id="canvas" class="w-[80vw] h-[80vh] bg-neutral m-auto"></canvas>
 <script src="/wasm/wasm_exec.js"></script>
 <script>
 	async function runWasm() {

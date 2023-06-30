@@ -1289,6 +1289,10 @@ html {
   border-radius: var(--rounded-box, 1rem);
 }
 
+.m-auto {
+  margin: auto;
+}
+
 .flex {
   display: flex;
 }
@@ -1297,12 +1301,16 @@ html {
   display: table;
 }
 
-.h-full {
-  height: 100%;
+.h-\[80vh\] {
+  height: 80vh;
 }
 
 .h-screen {
   height: 100vh;
+}
+
+.w-\[80vw\] {
+  width: 80vw;
 }
 
 .w-full {
@@ -1321,8 +1329,8 @@ html {
   flex-direction: column;
 }
 
-.gap-4 {
-  gap: 1rem;
+.gap-2 {
+  gap: 0.5rem;
 }
 
 .overflow-x-auto {
@@ -1342,11 +1350,6 @@ html {
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
-}
-
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
 }
 
 .text-3xl {
